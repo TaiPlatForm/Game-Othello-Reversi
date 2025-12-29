@@ -12,11 +12,11 @@ public class ReversiModel {
 
     // 8 huong di chuyenể
     // |TâyBắc| |Bắc| |ĐôngBắc|
-    // |Tây   | | x | |Đông	  |
+    // |Tây | | x | |Đông |
     // |TâyNam| |Nam| |ĐôngNam|
-    
-    private final int[] dx = { 0, 0, 1, -1, -1,  1, 1, -1 };
-    private final int[] dy = { 1,-1, 0, 0, 1, 1, -1, -1 };
+
+    private final int[] dx = { 0, 0, 1, -1, -1, 1, 1, -1 };
+    private final int[] dy = { 1, -1, 0, 0, 1, 1, -1, -1 };
 
     public ReversiModel() {
         board = new int[8][8];
@@ -35,14 +35,13 @@ public class ReversiModel {
         board[3][4] = BLACK;
         board[4][3] = BLACK;
         board[4][4] = WHITE;
-
         LuotChoiHienTai = BLACK;
         updateScore();
     }
 
     // dđặt quân cờ
     public boolean DatQuanCo(int row, int col) {
-        if (NuocDiHopLe(row, col)) {
+        if (NuocDiHopLe(row, col, LuotChoiHienTai)) {
             board[row][col] = LuotChoiHienTai;
             latCacQuanCo(row, col);
             DoiLuot();
@@ -61,12 +60,11 @@ public class ReversiModel {
         }
     }
 
-
     // kiem tra con nuoc di nao khong
     public boolean CoNuocDiHopLe() {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (NuocDiHopLe(i, j)) {
+                if (NuocDiHopLe(i, j, LuotChoiHienTai)) {
                     return true;
                 }
             }
@@ -76,34 +74,24 @@ public class ReversiModel {
 
     // kiem tra nguoi choi co the di khong
     public boolean NguoiChoiCoTheDi(int player) {
-        // Lượt tạm thời
-        int LuotTam = LuotChoiHienTai;
-        LuotChoiHienTai = player;
-
-        boolean CoTheDiDuoc = false;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (NuocDiHopLe(i, j)) {
-                    CoTheDiDuoc = true;
-                    break;
+                if (NuocDiHopLe(i, j, player)) {
+                    return true;
                 }
             }
-            if (CoTheDiDuoc)
-                break;
         }
-
-        LuotChoiHienTai = LuotTam;
-        return CoTheDiDuoc;
+        return false;
     }
 
     // kiem tra nước đi hợplệ (chi kiem tra, khong lat)
-    private boolean NuocDiHopLe(int row, int col) {
+    private boolean NuocDiHopLe(int row, int col, int player) {
         // check o phai trong
         if (row < 0 || row >= 8 || col < 0 || col >= 8 || board[row][col] != EMPTY) {
             return false;
         }
 
-        int doiThu = (LuotChoiHienTai == BLACK) ? WHITE : BLACK;
+        int doiThu = (player == BLACK) ? WHITE : BLACK;
 
         // duyet 8 huong
         for (int i = 0; i < 8; i++) {
@@ -115,12 +103,12 @@ public class ReversiModel {
             while (r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] == doiThu) {
                 r += dx[i];
                 c += dy[i];
-                count++; //đếm đối thủ bị kẹt ở giữa
+                count++; // đếm đối thủ bị kẹt ở giữa
             }
 
             // co the lat duoc o huong nay
-            if (count > 0 && r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] == LuotChoiHienTai) {
-                return true; 
+            if (count > 0 && r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] == player) {
+                return true;
             }
         }
 
@@ -144,7 +132,7 @@ public class ReversiModel {
                 count++;
             }
 
-         // co the lat duoc o huong nay
+            // co the lat duoc o huong nay
             if (count > 0 && r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] == LuotChoiHienTai) {
                 int hangLat = row + dx[i];
                 int cotLat = col + dy[i];
