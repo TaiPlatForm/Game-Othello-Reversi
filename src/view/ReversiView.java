@@ -54,10 +54,13 @@ public class ReversiView extends JFrame {
     }
 
     // cap nhat ban co
-    public void updateView(int[][] board, int currentPlayer, int blackScore, int whiteScore) {
+    public void updateView(int[][] board, int currentPlayer, int blackScore, int whiteScore, boolean[][] validMoves) {
         // duyet qua tung o
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
+                // Reset background color
+                cells[i][j].setBackground(Color.LIGHT_GRAY);
+
                 if (board[i][j] == 1) { // quan den
                     cells[i][j].setText("X");
                     cells[i][j].setForeground(Color.BLACK);
@@ -66,6 +69,11 @@ public class ReversiView extends JFrame {
                     cells[i][j].setForeground(Color.WHITE);
                 } else {
                     cells[i][j].setText(""); // o trong
+
+                    // Hien thi goi y
+                    if (validMoves != null && validMoves[i][j]) {
+                        cells[i][j].setBackground(new Color(200, 255, 200)); // Mau xanh nhat
+                    }
                 }
             }
         }

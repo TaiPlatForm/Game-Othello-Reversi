@@ -115,6 +115,21 @@ public class ReversiModel {
         return false;
     }
 
+    // lay danh sach nuoc di hop le
+    public boolean[][] getValidMoves(int player) {
+        boolean[][] validMoves = new boolean[8][8];
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (NuocDiHopLe(i, j, player)) {
+                    validMoves[i][j] = true;
+                } else {
+                    validMoves[i][j] = false;
+                }
+            }
+        }
+        return validMoves;
+    }
+
     // lật các quân cờ đã bị lật
     private void latCacQuanCo(int row, int col) {
         int doiThu = (LuotChoiHienTai == BLACK) ? WHITE : BLACK;

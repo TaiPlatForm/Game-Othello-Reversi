@@ -84,7 +84,8 @@ public class ReversiController implements ActionListener {
                 model.getBoard(),
                 model.getLuotChoiHienTai(),
                 model.getBlackScore(),
-                model.getWhiteScore());
+                model.getWhiteScore(),
+                model.getValidMoves(model.getLuotChoiHienTai()));
     }
 
 }
