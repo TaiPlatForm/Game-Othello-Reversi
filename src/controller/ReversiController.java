@@ -1,17 +1,23 @@
 package controller;
 
 import model.ReversiModel;
+import model.ReversiAI;
 import view.ReversiView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.Timer;
 
 public class ReversiController implements ActionListener {
     private ReversiModel model;
     private ReversiView view;
+    private ReversiAI ai;
+    private boolean aiEnabled = true; // Bật/tắt AI
+    private int aiPlayer = ReversiModel.WHITE; // AI chơi màu TRẮNG
 
     public ReversiController(ReversiModel model, ReversiView view) {
         this.model = model;
         this.view = view;
+        this.ai = new ReversiAI(aiPlayer);
 
         // dang ky su kien
         this.view.addGameListener(this);
@@ -42,24 +48,52 @@ public class ReversiController implements ActionListener {
         int LuotTiepTheo = model.getLuotChoiHienTai();
 
         // kiem tra nguoi ke tiep co di duoc khong
-        if (model.NguoiChoiCoTheDi(LuotTiepTheo)) {
-            return;
+        if (!model.NguoiChoiCoTheDi(LuotTiepTheo)) {
+            // nguoi ke tiep khong di duoc
+            String name = (LuotTiepTheo == ReversiModel.BLACK) ? "ĐEN" : "TRẮNG";
+            view.showMessage(name + " không còn nước đi hợp lệ! Đổi lượt.");
+
+            // trả lai luot
+            model.DoiLuot();
+            updateViewFromModel();
+
+            // kiem tra nguoi vua danh co di duoc khong
+            int LuotBanDau = model.getLuotChoiHienTai();
+            if (!model.NguoiChoiCoTheDi(LuotBanDau)) {
+                // ca 2 deu khong di duoc
+                GameOver();
+                return;
+            }
         }
 
-        // nguoi ke tiep khong di duoc
-        String name = (LuotTiepTheo == 1) ? "ĐEN" : "TRẮNG";
-        view.showMessage(name + " không còn nước đi hợp lệ! Đổi lượt.");
-
-        // trả lai luot
-        model.DoiLuot();
-        updateViewFromModel();
-
-        // kiem tra nguoi vua danh co di duoc khong
-        int LuotBanDau = model.getLuotChoiHienTai();
-        if (!model.NguoiChoiCoTheDi(LuotBanDau)) {
-            // ca 2 deu khong di duoc
-            GameOver();
+        // Nếu đến lượt AI thì AI tự động đi
+        if (aiEnabled && model.getLuotChoiHienTai() == aiPlayer) {
+            aiMove();
         }
+    }
+
+    // AI thực hiện nước đi
+    private void aiMove() {
+        // Dùng Timer để delay một chút, tránh AI đi ngay lập tức
+        Timer timer = new Timer(500, e -> {
+            // Tìm nước đi tốt nhất
+            int[] bestMove = ai.findBestMove(model.getBoard());
+
+            if (bestMove != null) {
+                int row = bestMove[0];
+                int col = bestMove[1];
+
+                // Thực hiện nước đi
+                boolean success = model.DatQuanCo(row, col);
+
+                if (success) {
+                    updateViewFromModel();
+                    XuLyLuotTiepTheo();
+                }
+            }
+        });
+        timer.setRepeats(false);
+        timer.start();
     }
 
     private void GameOver() {
@@ -88,4 +122,19 @@ public class ReversiController implements ActionListener {
                 model.getValidMoves(model.getLuotChoiHienTai()));
     }
 
+    // Bật/tắt AI
+    public void setAiEnabled(boolean enabled) {
+        this.aiEnabled = enabled;
+    }
+
+    // Đổi màu AI chơi
+    public void setAiPlayer(int player) {
+        this.aiPlayer = player;
+        this.ai = new ReversiAI(player);
+    }
+
+    // Đặt độ sâu tìm kiếm AI
+    public void setAiDepth(int depth) {
+        this.ai.setMaxDepth(depth);
+    }
 }

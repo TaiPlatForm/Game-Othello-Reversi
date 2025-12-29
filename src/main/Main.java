@@ -8,7 +8,9 @@ public class Main {
     public static void main(String[] args) {
         ReversiModel model = new ReversiModel();
         ReversiView view = new ReversiView();
-        new ReversiController(model, view);
+        ReversiController controller = new ReversiController(model, view);
         view.setVisible(true);
+        controller.setAiEnabled(true); // Tắt AI (chơi 2 người)
+        controller.setAiPlayer(ReversiModel.BLACK);
     }
 }
