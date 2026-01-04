@@ -64,7 +64,7 @@ public class ReversiAI {
             return temp;
         }
 
-        if (maxmin == false) { // MIN
+        else { // MIN
             int temp = 999999999;
 
             // foreach (các node con newState hợp lệ)
