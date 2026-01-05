@@ -62,7 +62,7 @@ public class ReversiView extends JFrame {
                 cells[i][j].setBackground(Color.LIGHT_GRAY);
 
                 if (board[i][j] == 1) { // quan den
-                    cells[i][j].setText("X");
+                    cells[i][j].setText("O");
                     cells[i][j].setForeground(Color.BLACK);
                 } else if (board[i][j] == 2) { // quan trang
                     cells[i][j].setText("O");

@@ -60,20 +60,8 @@ public class ReversiModel {
         }
     }
 
-    // kiem tra con nuoc di nao khong
-    public boolean CoNuocDiHopLe() {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if (NuocDiHopLe(i, j, LuotChoiHienTai)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     // kiem tra nguoi choi co the di khong
-    public boolean NguoiChoiCoTheDi(int player) {
+    public boolean CoNuocDiHopLe(int player) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (NuocDiHopLe(i, j, player)) {

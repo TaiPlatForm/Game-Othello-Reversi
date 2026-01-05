@@ -8,9 +8,9 @@ public class ReversiAI {
     public static final int BLACK = 1;
     public static final int WHITE = 2;
 
-    private int aiPlayer; // AI chơi màu nào
-    private int[] bestMove; // Lưu nước đi tốt nhất [row, col]
-    private int maxDepth = 5; // Độ sâu tìm kiếm
+    private int aiPlayer;
+    private int[] bestMove; // nước đi tốt nhất
+    private int maxDepth = 5;
 
     // 8 hướng di chuyển
     private final int[] dx = { 0, 0, 1, -1, -1, 1, 1, -1 };
@@ -21,9 +21,8 @@ public class ReversiAI {
         this.bestMove = new int[2];
     }
 
-    // MINIMAX VỚI ALPHA-BETA PRUNING
     public int minimax(boolean maxmin, int[][] state, int depth, int player, int alpha, int beta) {
-        // CƠ SỞ - base case
+        // co sở
         if (depth == 0 || isOver(state)) {
             return heuristic(state);
         }
@@ -36,7 +35,7 @@ public class ReversiAI {
             return minimax(!maxmin, state, depth - 1, getOpponent(player), alpha, beta);
         }
 
-        // ĐỆ QUY
+        // Đệ quy
         if (maxmin == true) { // MAX
             int temp = -999999999;
 
@@ -50,13 +49,12 @@ public class ReversiAI {
 
                 if (value > temp) {
                     temp = value;
-                    // Ghi lại node/state đang xét (chỉ ở depth gốc)
                     if (depth == maxDepth) {
                         bestMove[0] = move[0];
                         bestMove[1] = move[1];
                     }
                 }
-                // ALPHA-BETA: Cập nhật alpha và cắt tỉa
+                // alpha
                 alpha = Math.max(alpha, temp);
                 if (beta <= alpha)
                     break; // Cắt tỉa beta
@@ -76,12 +74,12 @@ public class ReversiAI {
 
                 if (value < temp) {
                     temp = value;
-                    // Ghi lại node/state đang xét
+
                 }
-                // ALPHA-BETA: Cập nhật beta và cắt tỉa
+                // beta
                 beta = Math.min(beta, temp);
                 if (alpha >= beta)
-                    break; // Cắt tỉa alpha (không phải beta)
+                    break; // Cắt tỉa alpha
 
             }
             return temp;
@@ -89,20 +87,18 @@ public class ReversiAI {
 
     }
 
-    // HÀM TÌM NƯỚC ĐI TỐT NHẤT
+    // tìm nc đi tốt nhất
     public int[] findBestMove(int[][] board) {
         bestMove = new int[2];
-        // Gọi minimax với alpha = -∞, beta = +∞
         minimax(true, board, maxDepth, aiPlayer, Integer.MIN_VALUE, Integer.MAX_VALUE);
         return bestMove;
     }
 
-    // HEURISTIC - Đánh giá trạng thái bàn cờ
     private int heuristic(int[][] state) {
         int opponent = getOpponent(aiPlayer);
         int score = 0;
 
-        // Bảng trọng số vị trí (góc quan trọng nhất)
+        // vị trí các góc quan trọng
         int[][] positionWeight = {
                 { 100, -20, 10, 5, 5, 10, -20, 100 },
                 { -20, -50, -2, -2, -2, -2, -50, -20 },
@@ -125,7 +121,7 @@ public class ReversiAI {
             }
         }
 
-        // Thêm điểm cho số nước đi có thể (mobility)
+        // Thêm điểm cho số nước đi có thể
         int aiMoves = getValidMoves(state, aiPlayer).size();
         int opponentMoves = getValidMoves(state, opponent).size();
         score += (aiMoves - opponentMoves) * 5;
@@ -133,15 +129,13 @@ public class ReversiAI {
         return score;
     }
 
-    // isOver - Kiểm tra game kết thúc
     private boolean isOver(int[][] state) {
-        // Game kết thúc khi cả 2 người chơi đều không có nước đi
         boolean blackCanMove = !getValidMoves(state, BLACK).isEmpty();
         boolean whiteCanMove = !getValidMoves(state, WHITE).isEmpty();
         return !blackCanMove && !whiteCanMove;
     }
 
-    // getValidMoves - Lấy danh sách nước đi hợp lệ
+    // lấy danh sách nước đi hợp lệ
     private List<int[]> getValidMoves(int[][] state, int player) {
         List<int[]> moves = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
@@ -181,7 +175,6 @@ public class ReversiAI {
         return false;
     }
 
-    // copyBoard - Sao chép bàn cờ
     private int[][] copyBoard(int[][] board) {
         int[][] copy = new int[8][8];
         for (int i = 0; i < 8; i++) {
@@ -192,7 +185,7 @@ public class ReversiAI {
         return copy;
     }
 
-    // makeMove - Thực hiện nước đi (đặt quân + lật)
+    // Thực hiện nước đi
     private void makeMove(int[][] state, int row, int col, int player) {
         state[row][col] = player;
         int opponent = getOpponent(player);
@@ -221,25 +214,9 @@ public class ReversiAI {
         }
     }
 
-    // getOpponent - Lấy đối thủ
+    // Lấy đối thủ
     private int getOpponent(int player) {
         return (player == BLACK) ? WHITE : BLACK;
     }
 
-    // Getter/Setter
-    public int getMaxDepth() {
-        return maxDepth;
-    }
-
-    public void setMaxDepth(int depth) {
-        this.maxDepth = depth;
-    }
-
-    public int getAiPlayer() {
-        return aiPlayer;
-    }
-
-    public void setAiPlayer(int player) {
-        this.aiPlayer = player;
-    }
 }

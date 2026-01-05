@@ -48,7 +48,7 @@ public class ReversiController implements ActionListener {
         int LuotTiepTheo = model.getLuotChoiHienTai();
 
         // kiem tra nguoi ke tiep co di duoc khong
-        if (!model.NguoiChoiCoTheDi(LuotTiepTheo)) {
+        if (!model.CoNuocDiHopLe(LuotTiepTheo)) {
             // nguoi ke tiep khong di duoc
             String name = (LuotTiepTheo == ReversiModel.BLACK) ? "ĐEN" : "TRẮNG";
             view.showMessage(name + " không còn nước đi hợp lệ! Đổi lượt.");
@@ -59,7 +59,7 @@ public class ReversiController implements ActionListener {
 
             // kiem tra nguoi vua danh co di duoc khong
             int LuotBanDau = model.getLuotChoiHienTai();
-            if (!model.NguoiChoiCoTheDi(LuotBanDau)) {
+            if (!model.CoNuocDiHopLe(LuotBanDau)) {
                 // ca 2 deu khong di duoc
                 GameOver();
                 return;
@@ -131,10 +131,5 @@ public class ReversiController implements ActionListener {
     public void setAiPlayer(int player) {
         this.aiPlayer = player;
         this.ai = new ReversiAI(player);
-    }
-
-    // Đặt độ sâu tìm kiếm AI
-    public void setAiDepth(int depth) {
-        this.ai.setMaxDepth(depth);
     }
 }
